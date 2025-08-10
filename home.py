@@ -5,7 +5,7 @@ from PyQt5.QtWidgets import (
 )
 from PyQt5.QtGui import QFont, QColor, QPainter
 from PyQt5.QtCore import Qt, QTimer
-
+from explore import PhysicsWorld
 
 class HoverButton(QPushButton):
     def __init__(self, text):
@@ -20,7 +20,6 @@ class HoverButton(QPushButton):
                 padding: 10px;
             }
         """)
-        # Add shadow effect
         shadow = QGraphicsDropShadowEffect()
         shadow.setBlurRadius(20)
         shadow.setXOffset(0)
@@ -56,7 +55,7 @@ class HoverButton(QPushButton):
 class PhysicsWorldHome(QWidget):
     def __init__(self):
         super().__init__()
-        self.setWindowTitle("Physics World")
+        self.setWindowTitle("Everything Physics")
         self.setGeometry(300, 150, 800, 500)
         self.setStyleSheet("background-color: black;")
 
@@ -77,13 +76,15 @@ class PhysicsWorldHome(QWidget):
         layout = QVBoxLayout()
         layout.setAlignment(Qt.AlignCenter)
 
-        title = QLabel("Let's Learn Physics")
+        title = QLabel("Let's Learn")
         title.setFont(QFont("Georgia", 32, QFont.Bold))
         title.setStyleSheet("color: white; margin-bottom: 40px;")
         title.setAlignment(Qt.AlignCenter)
 
-        explore_btn = HoverButton("Explore Science Facts")
+        explore_btn = HoverButton("Explore")
         calc_btn = HoverButton("Calculate")
+
+        explore_btn.clicked.connect(self.open_explore_window)  # ✅ Link button to new window
 
         layout.addWidget(title)
         layout.addWidget(explore_btn)
@@ -91,9 +92,12 @@ class PhysicsWorldHome(QWidget):
 
         self.setLayout(layout)
 
+        # reference to explore window so it doesn't close instantly
+        self.explore_window = None
+
     def animate_equations(self):
         for eq in self.floating_texts:
-            eq[1] -= 1  # move up
+            eq[1] -= 1
             if eq[1] < -20:
                 eq[1] = 500
                 eq[0] = random.randint(0, 750)
@@ -106,6 +110,11 @@ class PhysicsWorldHome(QWidget):
         painter.setFont(QFont("Courier", 14))
         for x, y, eq in self.floating_texts:
             painter.drawText(x, y, eq)
+
+    def open_explore_window(self):
+        """Opens the explore.py PhysicsWorld window."""
+        self.explore_window = PhysicsWorld()
+        self.explore_window.show()
 
 
 if __name__ == "__main__":
